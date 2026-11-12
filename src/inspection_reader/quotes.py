@@ -1,12 +1,13 @@
 """Find a model's quote in the report text it came from, or report that it is not there.
 
-Copied from the sister project's `notes/quotes.py`, itself adapted from PetroKnowledge
-`verify.py` (`folded`, `quote_pattern`, `find_quote`; MIT, same author). A quote matches when
-the text holds the same words in the same order: case, typographic forms (curly quotes, dashes) and
-Unicode compatibility forms may differ, and so may line breaks and the spacing around
-punctuation. A comma, semicolon, colon or full stop may be added or dropped between words or at
-the quote's end. Between letters, or digits, spacing must be the quote's own ("therapist" is not
-"the rapist"), and a quote must start and end at word edges ("3 to 6" does not match "3 to 60").
+Copied from the author's homecare-intelligence project (`notes/quotes.py`), itself adapted
+from PetroKnowledge `verify.py` (`folded`, `quote_pattern`, `find_quote`; MIT, same author).
+A quote matches when the text holds the same words in the same order: case, typographic forms
+(curly quotes, dashes) and Unicode compatibility forms may differ, and so may line breaks and the
+spacing around punctuation. A comma, semicolon, colon or full stop may be added or dropped
+between words or at the quote's end. Between letters, or digits, spacing must be the quote's own
+("therapist" is not "the rapist"), and a quote must start and end at word edges ("3 to 6" does
+not match "3 to 60").
 """
 
 import re

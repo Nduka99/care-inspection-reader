@@ -1,0 +1,449 @@
+{
+ "by_statement_test": {
+  "Infection prevention and control": {
+   "category_agreement": {
+    "found": 41,
+    "high": 0.9958,
+    "low": 0.8768,
+    "rate": 0.9762,
+    "total": 42
+   },
+   "flag_rate_score_3": {
+    "found": 12,
+    "high": 0.1469,
+    "low": 0.0508,
+    "rate": 0.0876,
+    "total": 137
+   },
+   "recall_score_2_or_below": {
+    "found": 42,
+    "high": 0.9874,
+    "low": 0.8486,
+    "rate": 0.9545,
+    "total": 44
+   }
+  },
+  "Involving people to manage risks": {
+   "category_agreement": {
+    "found": 108,
+    "high": 0.9533,
+    "low": 0.851,
+    "rate": 0.9153,
+    "total": 118
+   },
+   "flag_rate_score_3": {
+    "found": 4,
+    "high": 0.1293,
+    "low": 0.0209,
+    "rate": 0.0533,
+    "total": 75
+   },
+   "recall_score_2_or_below": {
+    "found": 118,
+    "high": 1.0,
+    "low": 0.9685,
+    "rate": 1.0,
+    "total": 118
+   }
+  },
+  "Learning culture": {
+   "category_agreement": {
+    "found": 100,
+    "high": 0.9946,
+    "low": 0.9313,
+    "rate": 0.9804,
+    "total": 102
+   },
+   "flag_rate_score_3": {
+    "found": 2,
+    "high": 0.0877,
+    "low": 0.007,
+    "rate": 0.0253,
+    "total": 79
+   },
+   "recall_score_2_or_below": {
+    "found": 102,
+    "high": 0.9947,
+    "low": 0.9326,
+    "rate": 0.9808,
+    "total": 104
+   }
+  },
+  "Medicines optimisation": {
+   "category_agreement": {
+    "found": 109,
+    "high": 0.9908,
+    "low": 0.9242,
+    "rate": 0.9732,
+    "total": 112
+   },
+   "flag_rate_score_3": {
+    "found": 10,
+    "high": 0.2126,
+    "low": 0.0685,
+    "rate": 0.1235,
+    "total": 81
+   },
+   "recall_score_2_or_below": {
+    "found": 112,
+    "high": 0.9984,
+    "low": 0.9516,
+    "rate": 0.9912,
+    "total": 113
+   }
+  },
+  "Safe and effective staffing": {
+   "category_agreement": {
+    "found": 115,
+    "high": 1.0,
+    "low": 0.9677,
+    "rate": 1.0,
+    "total": 115
+   },
+   "flag_rate_score_3": {
+    "found": 9,
+    "high": 0.2075,
+    "low": 0.0627,
+    "rate": 0.1169,
+    "total": 77
+   },
+   "recall_score_2_or_below": {
+    "found": 115,
+    "high": 0.9913,
+    "low": 0.9279,
+    "rate": 0.9746,
+    "total": 118
+   }
+  },
+  "Safe environments": {
+   "category_agreement": {
+    "found": 66,
+    "high": 1.0,
+    "low": 0.945,
+    "rate": 1.0,
+    "total": 66
+   },
+   "flag_rate_score_3": {
+    "found": 9,
+    "high": 0.1409,
+    "low": 0.0414,
+    "rate": 0.0776,
+    "total": 116
+   },
+   "recall_score_2_or_below": {
+    "found": 66,
+    "high": 0.9974,
+    "low": 0.9202,
+    "rate": 0.9851,
+    "total": 67
+   }
+  },
+  "Safe systems, pathways and transitions": {
+   "category_agreement": {
+    "found": 70,
+    "high": 1.0,
+    "low": 0.948,
+    "rate": 1.0,
+    "total": 70
+   },
+   "flag_rate_score_3": {
+    "found": 13,
+    "high": 0.2004,
+    "low": 0.0738,
+    "rate": 0.1238,
+    "total": 105
+   },
+   "recall_score_2_or_below": {
+    "found": 70,
+    "high": 1.0,
+    "low": 0.948,
+    "rate": 1.0,
+    "total": 70
+   }
+  },
+  "Safeguarding": {
+   "category_agreement": {
+    "found": 75,
+    "high": 0.9116,
+    "low": 0.7635,
+    "rate": 0.8523,
+    "total": 88
+   },
+   "flag_rate_score_3": {
+    "found": 8,
+    "high": 0.1346,
+    "low": 0.0366,
+    "rate": 0.0714,
+    "total": 112
+   },
+   "recall_score_2_or_below": {
+    "found": 88,
+    "high": 0.998,
+    "low": 0.9391,
+    "rate": 0.9888,
+    "total": 89
+   }
+  }
+ },
+ "dev": {
+  "chosen": {
+   "category_agreement": {
+    "found": 351,
+    "high": 0.981,
+    "low": 0.9431,
+    "rate": 0.9669,
+    "total": 363
+   },
+   "errors": 0,
+   "flag_rate_score_3": {
+    "found": 37,
+    "high": 0.1246,
+    "low": 0.0677,
+    "rate": 0.0923,
+    "total": 401
+   },
+   "flag_rate_score_4": {
+    "found": 0,
+    "high": 0.1246,
+    "low": 0.0,
+    "rate": 0.0,
+    "total": 27
+   },
+   "quote_drops": {
+    "found": 33,
+    "high": 0.025,
+    "low": 0.0127,
+    "rate": 0.0178,
+    "total": 1849
+   },
+   "recall_score_1": {
+    "found": 131,
+    "high": 1.0,
+    "low": 0.9715,
+    "rate": 1.0,
+    "total": 131
+   },
+   "recall_score_2_or_below": {
+    "found": 363,
+    "high": 0.9958,
+    "low": 0.9723,
+    "rate": 0.9891,
+    "total": 367
+   }
+  },
+  "compared": {
+   "category_agreement": {
+    "found": 358,
+    "high": 0.9924,
+    "low": 0.9645,
+    "rate": 0.9835,
+    "total": 364
+   },
+   "errors": 0,
+   "flag_rate_score_3": {
+    "found": 91,
+    "high": 0.2704,
+    "low": 0.1886,
+    "rate": 0.2269,
+    "total": 401
+   },
+   "flag_rate_score_4": {
+    "found": 9,
+    "high": 0.5218,
+    "low": 0.1864,
+    "rate": 0.3333,
+    "total": 27
+   },
+   "quote_drops": {
+    "found": 16,
+    "high": 0.0119,
+    "low": 0.0045,
+    "rate": 0.0074,
+    "total": 2173
+   },
+   "recall_score_1": {
+    "found": 131,
+    "high": 1.0,
+    "low": 0.9715,
+    "rate": 1.0,
+    "total": 131
+   },
+   "recall_score_2_or_below": {
+    "found": 364,
+    "high": 0.9972,
+    "low": 0.9762,
+    "rate": 0.9918,
+    "total": 367
+   }
+  }
+ },
+ "grading_test": {
+  "auroc_shortfall": {
+   "high": 0.9909,
+   "low": 0.9785,
+   "value": 0.9851
+  },
+  "shuffled_auroc_shortfall": {
+   "high": 0.5225,
+   "low": 0.4666,
+   "value": 0.4945
+  },
+  "shuffled_tau_b": {
+   "high": 0.0418,
+   "low": -0.0467,
+   "value": -0.0014
+  },
+  "tau_b": {
+   "high": 0.8233,
+   "low": 0.7834,
+   "value": 0.8034
+  }
+ },
+ "models": {
+  "chosen": "qwen3.5-4b",
+  "compared": "gemma-4-e4b"
+ },
+ "paired_test": {
+  "p_exact": 0.0156,
+  "shortfalls_caught_by_chosen_only": 0,
+  "shortfalls_caught_by_compared_only": 7,
+  "shortfalls_missed_by_both": 3
+ },
+ "read_by_hand": {
+  "good_flags_misread": 5,
+  "good_flags_out_of_context": 1,
+  "good_flags_real_minor": 13,
+  "good_flags_sampled": 20,
+  "good_flags_unclear": 1
+ },
+ "sample": {
+  "agencies": {
+   "Good": 100,
+   "Inadequate": 54,
+   "Outstanding": 17,
+   "Requires improvement": 160
+  },
+  "with_scored_text": {
+   "Good": 95,
+   "Inadequate": 49,
+   "Outstanding": 17,
+   "Requires improvement": 152
+  }
+ },
+ "sets": {
+  "dev": {
+   "by_score": {
+    "1": 131,
+    "2": 236,
+    "3": 401,
+    "4": 27
+   },
+   "carried_over_left_out": 51,
+   "reports": 106,
+   "sections": 795
+  },
+  "test": {
+   "by_score": {
+    "1": 274,
+    "2": 449,
+    "3": 782,
+    "4": 49
+   },
+   "carried_over_left_out": 102,
+   "reports": 207,
+   "sections": 1554
+  }
+ },
+ "test": {
+  "chosen": {
+   "category_agreement": {
+    "found": 684,
+    "high": 0.9715,
+    "low": 0.9422,
+    "rate": 0.9593,
+    "total": 713
+   },
+   "errors": 0,
+   "flag_rate_score_3": {
+    "found": 67,
+    "high": 0.1074,
+    "low": 0.068,
+    "rate": 0.0857,
+    "total": 782
+   },
+   "flag_rate_score_4": {
+    "found": 0,
+    "high": 0.0727,
+    "low": 0.0,
+    "rate": 0.0,
+    "total": 49
+   },
+   "quote_drops": {
+    "found": 78,
+    "high": 0.0269,
+    "low": 0.0173,
+    "rate": 0.0216,
+    "total": 3610
+   },
+   "recall_score_1": {
+    "found": 274,
+    "high": 1.0,
+    "low": 0.9862,
+    "rate": 1.0,
+    "total": 274
+   },
+   "recall_score_2_or_below": {
+    "found": 713,
+    "high": 0.9925,
+    "low": 0.9747,
+    "rate": 0.9862,
+    "total": 723
+   }
+  },
+  "compared": {
+   "category_agreement": {
+    "found": 702,
+    "high": 0.9841,
+    "low": 0.9608,
+    "rate": 0.975,
+    "total": 720
+   },
+   "errors": 0,
+   "flag_rate_score_3": {
+    "found": 136,
+    "high": 0.2021,
+    "low": 0.149,
+    "rate": 0.1739,
+    "total": 782
+   },
+   "flag_rate_score_4": {
+    "found": 10,
+    "high": 0.3364,
+    "low": 0.1148,
+    "rate": 0.2041,
+    "total": 49
+   },
+   "quote_drops": {
+    "found": 27,
+    "high": 0.0094,
+    "low": 0.0045,
+    "rate": 0.0065,
+    "total": 4170
+   },
+   "recall_score_1": {
+    "found": 274,
+    "high": 1.0,
+    "low": 0.9862,
+    "rate": 1.0,
+    "total": 274
+   },
+   "recall_score_2_or_below": {
+    "found": 720,
+    "high": 0.9986,
+    "low": 0.9879,
+    "rate": 0.9959,
+    "total": 723
+   }
+  }
+ }
+}

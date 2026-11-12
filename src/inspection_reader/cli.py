@@ -6,6 +6,8 @@ All data lives in the git-ignored `data/` folder:
 - `data/seen.json`: providers whose reports were read while designing the project;
 - `data/sample.json`: the agencies chosen, with their split;
 - `data/reports/<split>/<location>.json`: each report's parsed Safe sections.
+
+`site/results.json` is public: aggregates only, rebuilt from the runs by `results`.
 """
 
 import argparse
@@ -21,12 +23,15 @@ from inspection_reader import (
     models,
     parse,
     ratings,
+    results,
     sample,
     sets,
 )
 
 DATA = Path("data")
 RAW = DATA / "raw"
+# Public: aggregates only, built from the private runs.
+RESULTS = Path("site") / "results.json"
 PORT = 8091
 SPLITS = ("dev", "test")
 
@@ -125,7 +130,8 @@ def run_read(model: str, page: Path, out: Path | None) -> None:
     """Read one saved Safe page: each section's findings beside the inspector's score."""
     parsed = parse.parse(page.read_text(encoding="utf-8"))
     texts = [parse.model_text(section) for section in parsed["sections"]]
-    with models.served(model, PORT, DATA / "logs" / f"{model}.log") as url:
+    # Its own log: a read must never overwrite the server log of an extraction run.
+    with models.served(model, PORT, DATA / "logs" / f"read-{model}.log") as url:
         result = extract.extract(url, texts)
     sections = []
     for index, section in enumerate(parsed["sections"]):
@@ -180,7 +186,7 @@ def run_evaluate(model: str, split: str) -> None:
 
 
 def run_analyse(model: str, split: str) -> None:
-    """The further analyses (rules fixed before computing)."""
+    """The analyses in `analysis.py`, whose rules were written down before computing them."""
     reports = reports_of(split)
     records = read_jsonl(DATA / "runs" / split / f"{model}.jsonl")
     runs = {record["location"]: record for record in records[1:]}
@@ -209,6 +215,34 @@ def run_analyse(model: str, split: str) -> None:
     print(f"  memory {result['memory']}")
 
 
+def runs_of(split: str, model: str) -> dict[str, dict[str, Any]]:
+    records = read_jsonl(DATA / "runs" / split / f"{model}.jsonl")
+    return {record["location"]: record for record in records[1:]}
+
+
+def run_results(check: bool) -> None:
+    """Write the public aggregates, or (--check) rebuild them and compare with the file."""
+    sampled = json.loads((DATA / "sample.json").read_text(encoding="utf-8"))
+    reports = {split: reports_of(split) for split in SPLITS}
+    runs = {}
+    for split in SPLITS:
+        runs[split] = {model: runs_of(split, model) for model in (results.CHOSEN, results.COMPARED)}
+    fresh = results.build(sampled, reports, runs)
+    problems = results.problems(fresh)
+    if check:
+        committed = json.loads(RESULTS.read_text(encoding="utf-8"))
+        problems = results.problems(committed) + results.differences(committed, fresh)
+    for problem in problems:
+        print(problem)
+    if problems:
+        raise SystemExit(f"{len(problems)} problems; {RESULTS} not trusted")
+    if check:
+        print(f"{RESULTS}: every number matches the runs")
+    else:
+        write_json(RESULTS, fresh)
+        print(f"wrote {RESULTS}")
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="inspection-reader")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -226,9 +260,15 @@ def main(argv: list[str] | None = None) -> None:
     read.add_argument("--model", required=True)
     read.add_argument("--out", type=Path, help="write the reading here instead of printing it")
     read.add_argument("page", type=Path, help="a Safe page saved from CQC's website")
+    results_command = commands.add_parser("results", help="write the public aggregates")
+    results_command.add_argument(
+        "--check", action="store_true", help="rebuild them from the runs and compare with the file"
+    )
     args = parser.parse_args(argv)
     if args.command == "read":
         run_read(args.model, args.page, args.out)
+    elif args.command == "results":
+        run_results(args.check)
     elif args.command == "sample":
         run_sample()
     elif args.command == "fetch":

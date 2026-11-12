@@ -1,9 +1,9 @@
 """The local models, listed in models.json: each file's source, revision, size, SHA-256,
 licence, role and the llama-server options it runs with.
 
-Copied from the sister project's `models.py`. The files live in the git-ignored `models/`
-folder. A model is served only after its SHA-256 matches. The llama-server program is found on
-PATH, or at the path in the `LLAMA_SERVER` environment variable.
+Copied from the author's homecare-intelligence project (`models.py`). The files live in the
+git-ignored `models/` folder. A model is served only after its SHA-256 matches. The
+llama-server program is found on PATH, or at the path in the `LLAMA_SERVER` environment variable.
 """
 
 import hashlib

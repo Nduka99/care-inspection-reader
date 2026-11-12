@@ -56,7 +56,7 @@ def test_a_carried_over_section_is_not_assessed() -> None:
     assert assessed({"paragraphs": ["We did not look at the rota but staff were kind."]})
 
 
-def test_sabotage_a_carried_over_section_never_counts_as_caught() -> None:
+def test_a_carried_over_section_never_counts_as_caught() -> None:
     reports = [
         {
             "location": "a",

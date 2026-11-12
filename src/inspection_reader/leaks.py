@@ -1,5 +1,5 @@
 """Finds what must never be published: a CQC location or provider ID, the name of a sampled
-service, or a run of words from a cached report (threat model T7).
+service, or a run of words from a cached report.
 
 Report text is public on CQC's website, so one exact sentence finds its report by search, and
 the provider with it. A run of RUN_WORDS words is long enough to single out a report. A run found
@@ -7,8 +7,8 @@ in the reports of STOCK_PROVIDERS or more providers is CQC's own stock wording (
 which singles out no one, so it is allowed: the rule is about how widely the words are shared,
 never about which words they are.
 
-`findings` is pure. `load_oracle` reads the private files in `data/` (git-ignored), so only the
-owner's machine runs the scan against the real reports.
+`findings` is pure. `load_watch_list` reads the files in the git-ignored `data/` folder, so the
+scan against the real reports runs only on the machine that holds them: the author's.
 """
 
 import csv
@@ -64,9 +64,9 @@ def findings(texts: dict[str, str], names: list[str], secret_runs: set[str]) -> 
     return found
 
 
-def load_oracle(data: Path) -> tuple[list[str], set[str]]:
-    """The sampled services' names, from CQC's directory file, and the private runs of every
-    cached report (its overview and its sections)."""
+def load_watch_list(data: Path) -> tuple[list[str], set[str]]:
+    """What the scan watches for: the sampled services' names, from CQC's directory file, and
+    the private runs of every cached report (its overview and its sections)."""
     sampled = {record["location"] for record in read_json(data / "sample.json")}
     names: set[str] = set()
     for row in directory_rows(data / "raw" / "directory"):

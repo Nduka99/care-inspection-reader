@@ -1,4 +1,4 @@
-"""The publish scan (threat model T7), on planted synthetic data. Each test passes only when the
+"""The publish scan, on planted synthetic data. Each test passes only when the
 planted leak is found; each `test_sabotage_*` switches one part of the scan off and shows the
 leak then goes through."""
 
@@ -74,7 +74,7 @@ def test_sabotage_without_the_id_pattern_a_planted_id_passes(
     assert leaks.findings({"a.md": f"location {PLANTED_ID}"}, NAMES, SECRET) == []
 
 
-def test_the_oracle_is_read_from_the_directory_and_the_cached_reports(tmp_path: Path) -> None:
+def test_the_watch_list_is_read_from_the_directory_and_the_cached_reports(tmp_path: Path) -> None:
     (tmp_path / "raw" / "directory").mkdir(parents=True)
     title = "CQC Locations data\n\n\n\n"
     header = '"Name","Also known as","Provider name","CQC Location ID (for office use only)"\n'
@@ -84,7 +84,7 @@ def test_the_oracle_is_read_from_the_directory_and_the_cached_reports(tmp_path: 
     (tmp_path / "reports" / "test").mkdir(parents=True)
     report = {"provider": "provider-a", "overview": [OTHER], "sections": [{"paragraphs": [REPORT]}]}
     (tmp_path / "reports" / "test" / "r.json").write_text(json.dumps(report), encoding="utf-8")
-    names, secret = leaks.load_oracle(tmp_path)
+    names, secret = leaks.load_watch_list(tmp_path)
     assert names == ["Larkfield Care Services", "Larkfield Ltd"]
     # A report's overview and paragraphs are read as one text, so runs also cross paragraphs.
     assert leaks.runs(OTHER + "\n" + REPORT) == secret

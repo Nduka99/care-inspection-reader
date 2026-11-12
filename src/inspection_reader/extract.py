@@ -3,8 +3,8 @@ section describes, with a category, the exact words that state it, and a reason.
 
 - One call per section, not per report: with one call and one cap on findings, the first
   sections of a long report used the whole cap, and later sections scored 1 got no finding at
-  all (dev, 4 Nov). The model still sees only the section's paragraphs, never its heading or
-  score (the leak guard in `parse.py`).
+  all (seen on the dev set, 4 Nov 2026). The model still sees only the section's paragraphs,
+  never its heading or score (the leak guard in `parse.py`).
 - The categories are CQC's eight Safe quality statements, described in this project's words.
 - The text is untrusted. It reaches the model as a JSON string, so nothing written in
   it can end the data field and pose as an instruction.

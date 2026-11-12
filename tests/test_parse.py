@@ -1,4 +1,4 @@
-"""The parser and its leak guard (threat model T2), on a synthetic page."""
+"""The parser and its leak guard (no label reaches the model), on a synthetic page."""
 
 from pathlib import Path
 
@@ -31,7 +31,8 @@ def test_the_footer_after_the_report_body_is_not_read() -> None:
 
 
 def label_strings() -> list[str]:
-    """The labels, as the parser read them apart from the text: the oracle for the leak test."""
+    """The labels, as the parser read them apart from the text: the expected answer for the
+    leak test."""
     found = [PAGE["rating"], *PAGE["overview"]]
     for section in PAGE["sections"]:
         found += [section["statement"], f"Score: {section['score']}"]

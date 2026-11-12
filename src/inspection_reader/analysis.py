@@ -1,11 +1,11 @@
-"""Analyses of a finished run beyond the fixed measures; their rules
-were fixed on 2026-11-05, before any was computed.
+"""Analyses of a finished run beyond the main measures in `evaluate.py`. Their rules were written
+down on 5 Nov 2026, before any of them was computed.
 
 - Grading: does the number of findings in a section follow the inspector's score? AUROC and
   Kendall's tau-b, both computed from a table of (score, findings) counts.
 - Intervals: a cluster bootstrap that resamples whole reports, because sections of one report
   are correlated (Pang et al. 2023; Field and Welsh 2007).
-- By topic: the fixed measures for each Safe quality statement.
+- By topic: the main measures for each Safe quality statement.
 - Memory check: reports published before and after the model's training cutoff (Roberts et al.,
   ICLR 2024).
 """

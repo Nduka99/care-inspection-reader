@@ -1,9 +1,10 @@
 """The registry of evaluation sets. Copied from PetroKnowledge `evaluation/sets.py` (MIT, same
 author).
 
-Each split's parsed reports live in the git-ignored `data/reports/<split>/`. The committed
-registry (`evaluation/sets.json`) records every file's SHA-256, so a changed report is caught
-before anything is scored. A registered hash never changes.
+Each split's parsed reports live in the git-ignored `data/reports/<split>/`. The registry
+(`evaluation/sets.json`) records every file's SHA-256, so a changed report is caught before
+anything is scored. A registered hash never changes. The registry is kept out of the public
+repository: its file names are CQC location IDs, which would link the results to named services.
 """
 
 import hashlib

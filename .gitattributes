@@ -1,2 +1,2 @@
-# Same line endings on every machine, so the container and CI see identical files.
+# Same line endings on every machine, so CI sees the same files as every developer.
 * text=auto eol=lf

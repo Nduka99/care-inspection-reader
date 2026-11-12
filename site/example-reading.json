@@ -1,0 +1,114 @@
+{
+ "dropped": 0,
+ "error": [],
+ "header": {
+  "model": "qwen3.5-4b",
+  "prompt": "508785a5c047969f9a22986a553d2f7bceb324707be4b38564fb1c9f0d26210b",
+  "sha256": "00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4"
+ },
+ "sections": [
+  {
+   "findings": [
+    {
+     "category": "Safe and effective staffing",
+     "quote": "The provider did not plan rotas with any travel time between calls.",
+     "reason": "Failure to account for travel time in scheduling compromises staff availability and service delivery.",
+     "section": 0
+    },
+    {
+     "category": "Safe and effective staffing",
+     "quote": "almost a third of morning calls started more than 45 minutes after the agreed time",
+     "reason": "Significant delays in arrival times indicate poor staffing management and unreliable service.",
+     "section": 0
+    },
+    {
+     "category": "Safe and effective staffing",
+     "quote": "19 calls lasted less than half of their planned length",
+     "reason": "Inconsistent visit durations suggest inadequate staffing levels or poor scheduling.",
+     "section": 0
+    },
+    {
+     "category": "Safe and effective staffing",
+     "quote": "Two new carers had started visiting people on their own before their references and criminal record checks had come back.",
+     "reason": "Allowing unvetted staff to work independently creates a serious safeguarding risk.",
+     "section": 0
+    }
+   ],
+   "paragraphs": [
+    "The provider did not plan rotas with any travel time between calls. Records for the four weeks before our visit showed that almost a third of morning calls started more than 45 minutes after the agreed time, and 19 calls lasted less than half of their planned length.",
+    "One relative told us, \"Mum waits in bed until nearly eleven some days, and nobody rings to say they are running late.\" Two new carers had started visiting people on their own before their references and criminal record checks had come back."
+   ],
+   "score": 1,
+   "statement": "Safe and effective staffing"
+  },
+  {
+   "findings": [
+    {
+     "category": "Medicines optimisation",
+     "quote": "one person's blood thinner was prescribed for 6pm and was given at any time between 4pm and 9pm, because their teatime call had no fixed time.",
+     "reason": "Medication was administered outside the prescribed time due to scheduling issues.",
+     "section": 1
+    },
+    {
+     "category": "Medicines optimisation",
+     "quote": "three people had no body map showing where each cream should go.",
+     "reason": "Care staff lacked visual guides to ensure correct application of creams.",
+     "section": 1
+    },
+    {
+     "category": "Learning culture",
+     "quote": "The office looked at the records every week and had noticed some of these gaps, but had not acted on them.",
+     "reason": "Identified gaps in care records were not addressed, indicating a failure to act on concerns.",
+     "section": 1
+    }
+   ],
+   "paragraphs": [
+    "People mostly received their medicines as prescribed, and carers completed the electronic record at each call. However, one person's blood thinner was prescribed for 6pm and was given at any time between 4pm and 9pm, because their teatime call had no fixed time.",
+    "Carers applied creams, but three people had no body map showing where each cream should go. The office looked at the records every week and had noticed some of these gaps, but had not acted on them."
+   ],
+   "score": 2,
+   "statement": "Medicines optimisation"
+  },
+  {
+   "findings": [
+    {
+     "category": "Safe and effective staffing",
+     "quote": "It did not say that they now needed two carers to help them stand.",
+     "reason": "The care plan failed to update staffing requirements after a recent fall, leaving the person at risk of injury.",
+     "section": 2
+    }
+   ],
+   "paragraphs": [
+    "Carers knew people well and could tell us how each person liked to be helped. Plans for people living with diabetes set out the signs of a high or a low blood sugar and what carers should do.",
+    "A person who had fallen twice in the autumn still had a moving plan written before the falls. It did not say that they now needed two carers to help them stand."
+   ],
+   "score": 2,
+   "statement": "Involving people to manage risks"
+  },
+  {
+   "findings": [
+    {
+     "category": "Learning culture",
+     "quote": "One form from August recorded a fall but not what was done about it afterwards",
+     "reason": "The service failed to document follow-up actions for a recorded incident.",
+     "section": 3
+    }
+   ],
+   "paragraphs": [
+    "Carers logged accidents and near misses on their phones, and the registered manager read each one within two working days. Lessons were talked through at team meetings and in a monthly newsletter.",
+    "One form from August recorded a fall but not what was done about it afterwards; the manager added the missing actions while we were there. People and their families felt able to raise a worry and said the office listened."
+   ],
+   "score": 3,
+   "statement": "Learning culture"
+  },
+  {
+   "findings": [],
+   "paragraphs": [
+    "Carers always had gloves, aprons and hand gel, and spot checks found they used them well at every call we watched. Two carers trained as infection leads visited each new starter on their first shifts to check their practice.",
+    "When a stomach bug spread through one village last winter, the agency kept the same small team on the homes affected until it had passed, and nobody else became unwell."
+   ],
+   "score": 4,
+   "statement": "Infection prevention and control"
+  }
+ ]
+}

@@ -17,8 +17,8 @@ from typing import Any
 from inspection_reader.metrics import proportion
 
 # CQC's own wording for a statement it did not assess this time: the score is carried over from
-# the previous rating, so it says nothing about the text (only statements with
-# their own text are used). Found in the error sample of 2026-11-05: these sections were scored.
+# the previous rating, so it says nothing about the text (only statements with their own text are
+# used). Found on 5 Nov 2026 by reading a sample of flagged sections: these had been scored.
 NOT_ASSESSED = re.compile(
     r"we did not look at .{0,80}? during this assessment\. the score for this quality statement"
     r" is based on the previous rating",

@@ -1,5 +1,7 @@
-"""Attack tests (threat model T1, T3, T4, T5). Each passes only when the attack fails; each
-`test_sabotage_*` switches the protection off and shows the attack then gets through."""
+"""Attack tests: a made-up quote, report text that tries to leave its data field, a provider
+in both splits, and a path robots.txt disallows. Each passes only when the attack fails; each
+`test_sabotage_*` switches the protection off and shows the attack then gets through, so the
+attack test is known to be able to fail."""
 
 import json
 from pathlib import Path

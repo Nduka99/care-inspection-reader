@@ -1,4 +1,4 @@
-"""The further analyses: each measure on hand-made sections with a known
+"""The analyses in `analysis.py`: each measure on hand-made sections with a known
 answer. No real report text is used."""
 
 import random
@@ -41,7 +41,7 @@ def test_tau_b_is_one_for_a_perfect_order_and_minus_one_reversed() -> None:
 
 
 def test_tau_b_matches_a_pair_by_pair_count_with_ties() -> None:
-    """The independent oracle: count every pair directly, then apply tau-b's tie correction."""
+    """An independent count: every pair is counted directly, then tau-b's tie correction applied."""
     rng = random.Random(1)
     sections = [section("a", rng.randint(1, 4), rng.randint(0, 3)) for _ in range(60)]
     xs = [len(s["findings"]) for s in sections]
