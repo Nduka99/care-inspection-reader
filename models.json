@@ -1,0 +1,44 @@
+[
+ {
+  "name": "gemma-4-e4b",
+  "file": "gemma-4-E4B-it-Q4_K_M.gguf",
+  "source": "unsloth/gemma-4-E4B-it-GGUF",
+  "revision": "ce152932ac27bc40bc9c727386760424d50bb456",
+  "bytes": 4977169088,
+  "sha256": "dff0ffba4c90b4082d70214d53ce9504a28d4d8d998276dcb3b8881a656c742a",
+  "licence": "Apache-2.0",
+  "family": "Google Gemma",
+  "role": "extraction candidate",
+  "server_args": [
+   "-ngl",
+   "all",
+   "-c",
+   "16384",
+   "-np",
+   "1",
+   "--fit",
+   "off"
+  ]
+ },
+ {
+  "name": "qwen3.5-4b",
+  "file": "Qwen3.5-4B-Q4_K_M.gguf",
+  "source": "unsloth/Qwen3.5-4B-GGUF",
+  "revision": "e87f176479d0855a907a41277aca2f8ee7a09523",
+  "bytes": 2740937888,
+  "sha256": "00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4",
+  "licence": "Apache-2.0",
+  "family": "Alibaba Qwen",
+  "role": "extraction candidate",
+  "server_args": [
+   "-ngl",
+   "all",
+   "-c",
+   "16384",
+   "-np",
+   "1",
+   "--fit",
+   "off"
+  ]
+ }
+]

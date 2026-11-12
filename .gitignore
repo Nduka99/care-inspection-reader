@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.env
+# Local-only material: fetched CQC pages, model files and the private publish tools never enter git.
+data/
+models/
+tools/
