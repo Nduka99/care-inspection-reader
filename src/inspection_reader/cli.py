@@ -116,12 +116,35 @@ def append_jsonl(path: Path, record: dict[str, Any]) -> None:
         file.write(json.dumps(record, ensure_ascii=False, sort_keys=True) + "\n")
 
 
-def run_extract(model: str, split: str) -> None:
-    header = {
-        "model": model,
-        "sha256": models.entry(model)["sha256"],
-        "prompt": extract.PROMPT_HASH,
+def run_header(model: str) -> dict[str, str]:
+    """What a reading depends on: the model file and the prompt."""
+    return {"model": model, "sha256": models.entry(model)["sha256"], "prompt": extract.PROMPT_HASH}
+
+
+def run_read(model: str, page: Path, out: Path | None) -> None:
+    """Read one saved Safe page: each section's findings beside the inspector's score."""
+    parsed = parse.parse(page.read_text(encoding="utf-8"))
+    texts = [parse.model_text(section) for section in parsed["sections"]]
+    with models.served(model, PORT, DATA / "logs" / f"{model}.log") as url:
+        result = extract.extract(url, texts)
+    sections = []
+    for index, section in enumerate(parsed["sections"]):
+        findings = [f for f in result["findings"] if f["section"] == index]
+        sections.append({**section, "findings": findings})
+    reading = {
+        "header": run_header(model),
+        "sections": sections,
+        "dropped": result["dropped"],
+        "error": result.get("error", []),
     }
+    if out is None:
+        print(json.dumps(reading, indent=1, ensure_ascii=False))
+    else:
+        write_json(out, reading)
+
+
+def run_extract(model: str, split: str) -> None:
+    header = run_header(model)
     reports = reports_of(split)
     out = DATA / "runs" / split / f"{model}.jsonl"
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -199,8 +222,14 @@ def main(argv: list[str] | None = None) -> None:
         command = commands.add_parser(name)
         command.add_argument("--model", required=True)
         command.add_argument("--split", required=True, choices=SPLITS)
+    read = commands.add_parser("read", help="read one saved Safe page with a local model")
+    read.add_argument("--model", required=True)
+    read.add_argument("--out", type=Path, help="write the reading here instead of printing it")
+    read.add_argument("page", type=Path, help="a Safe page saved from CQC's website")
     args = parser.parse_args(argv)
-    if args.command == "sample":
+    if args.command == "read":
+        run_read(args.model, args.page, args.out)
+    elif args.command == "sample":
         run_sample()
     elif args.command == "fetch":
         run_fetch(args.limit)

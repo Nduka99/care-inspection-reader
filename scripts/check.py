@@ -49,9 +49,9 @@ def git_lines(*args: str) -> list[str]:
 
 
 def ships(path: str) -> bool:
-    """Whether a file can be published: no Markdown but the README ever is (the private
-    notes and coordination files are Markdown)."""
-    return not path.endswith(".md") or Path(path).name == "README.md"
+    """Whether a file can be published: no Markdown but the README and the security policy
+    ever is (the private notes and coordination files are Markdown)."""
+    return not path.endswith(".md") or Path(path).name in ("README.md", "SECURITY.md")
 
 
 def files_to_commit() -> dict[str, str]:

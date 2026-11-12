@@ -21,6 +21,7 @@ Needs [uv](https://docs.astral.sh/uv/).
 |---|---|
 | Install | `uv sync` |
 | Run every check | `uv run python scripts/check.py` |
+| Read one saved Safe page with a local model | `uv run inspection-reader read --model qwen3.5-4b page.html` |
 
 ## Data
 

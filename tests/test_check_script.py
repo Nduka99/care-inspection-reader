@@ -27,8 +27,9 @@ def test_clean_files_pass() -> None:
     assert check.attribution_problems({"src/a.py": "def f() -> int:\n    return 1\n"}) == []
 
 
-def test_only_the_readme_ships_among_markdown_files() -> None:
+def test_only_the_readme_and_security_policy_ship_among_markdown_files() -> None:
     assert check.ships("README.md")
+    assert check.ships("SECURITY.md")
     assert check.ships("src/inspection_reader/__init__.py")
     assert not check.ships("docs/notes.md")
     assert not check.ships("NOTES.md")
