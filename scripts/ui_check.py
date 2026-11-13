@@ -48,9 +48,9 @@ OUT = Path("data/ui")
 ENGINES = ("chromium", "firefox", "webkit")
 PAGES = {
     "index.html": "Overview",
-    "example.html": "Worked example",
+    "example.html": "Example",
     "results.html": "Results",
-    "method.html": "Method and data",
+    "method.html": "Method",
 }
 SIZES = {"phone": (390, 844), "desktop": (1280, 900)}
 # Addresses the walk mistypes on purpose; the browser logs their 404 to the console.

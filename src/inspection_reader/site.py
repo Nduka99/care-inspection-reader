@@ -20,11 +20,12 @@ from inspection_reader.sample import DEV_SHARE
 
 POLICY = "default-src 'none'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'"
 NAME = "Care inspection reader"
+# Short names, so the four fit one row on a phone; each page's own heading gives its full name.
 PAGES = (
     ("index.html", "Overview"),
-    ("example.html", "Worked example"),
+    ("example.html", "Example"),
     ("results.html", "Results"),
-    ("method.html", "Method and data"),
+    ("method.html", "Method"),
 )
 # CQC's wording for each score of a quality statement.
 SCORES = {
@@ -37,6 +38,7 @@ SCORE_TONES = {1: "today", 2: "visit", 3: "", 4: "done"}
 MODEL_NAMES = {"qwen3.5-4b": "Qwen3.5-4B", "gemma-4-e4b": "Gemma 4 E4B"}
 RATINGS = ("Inadequate", "Requires improvement", "Good", "Outstanding")
 REPOSITORY = "https://github.com/Nduka99/care-inspection-reader"
+RESULTS_FILE = f"{REPOSITORY}/blob/main/site/results.json"
 # The companion project: the same extraction method on synthetic care notes, with a live demo.
 COMPANION = "https://care.ndukanwagbo.com"
 COMPANION_REPOSITORY = "https://github.com/Nduka99/homecare_intelligence"
@@ -93,10 +95,11 @@ def estimate(measure: dict[str, float]) -> str:
 # The parts every page shares.
 
 
-def shell(name: str, title: str, main: str, root: str = "") -> str:
+def shell(name: str, title: str, main: str, root: str = "", tag: str = "") -> str:
     """One page: the app bar with the page switch, the main content and the footer. Links are
     relative, so the site works at any address; `root` is "/" for the not-found page, which
-    the host serves at whatever address was asked for."""
+    the host serves at whatever address was asked for. A `tag` sits in the app bar after the
+    name, as the home-care app shows its SYNTHETIC tag."""
     links = []
     for file, label in PAGES:
         current = ' aria-current="page"' if file == name else ""
@@ -118,7 +121,7 @@ def shell(name: str, title: str, main: str, root: str = "") -> str:
 <a class="skip" href="#main">Skip to the main content</a>
 <header class="appbar">
 <div class="appbar-inner">
-<a class="brand" href="{root}index.html">{MARK}<span class="brand-name">{NAME}</span></a>
+<a class="brand" href="{root}index.html">{MARK}<span class="brand-name">{NAME}</span></a>{tag}
 <nav class="pages" aria-label="Pages">{"".join(links)}</nav>
 </div>
 </header>
@@ -138,8 +141,8 @@ synthetic care notes.</p>
 """
 
 
-def head(title: str, sub: str, tag: str = "") -> str:
-    return f'<div class="page-head">{tag}<h1>{title}</h1><p class="sub">{sub}</p></div>'
+def head(title: str, sub: str) -> str:
+    return f'<div class="page-head"><h1>{title}</h1><p class="sub">{sub}</p></div>'
 
 
 def card(heading_id: str, heading: str, body: str) -> str:
@@ -182,19 +185,21 @@ def meter(name: str, detail: str, found: int, total: int) -> str:
 
 def score_tag(score: int) -> str:
     tone = SCORE_TONES[score]
-    return f'<span class="tag {tone}">Score {score} · {SCORES[score]}</span>'
+    classes = f"tag {tone}" if tone else "tag"
+    return f'<span class="{classes}">Score {score} · {SCORES[score]}</span>'
 
 
 # The overview.
 
 
 def flagged_by_score(results: Results) -> str:
-    """The headline: the share of test sections flagged at each score. The file holds scores 1
+    """The headline: the share of test sections flagged at each score, in two groups with
+    opposite goals, so a short bar is read as good where it is good. The file holds scores 1
     and 1 or 2 together, so score 2 alone is their difference."""
     chosen = results["test"]["chosen"]
     one = chosen["recall_score_1"]
     one_or_two = chosen["recall_score_2_or_below"]
-    rows = [
+    shortfalls = [
         meter("Score 1", SCORES[1], one["found"], one["total"]),
         meter(
             "Score 2",
@@ -203,23 +208,33 @@ def flagged_by_score(results: Results) -> str:
             one_or_two["total"] - one["total"],
         ),
     ]
+    good = []
     for score in (3, 4):
         p = chosen[f"flag_rate_score_{score}"]
-        rows.append(meter(f"Score {score}", SCORES[score], p["found"], p["total"]))
-    return f'<ul class="meters">{"".join(rows)}</ul>'
+        good.append(meter(f"Score {score}", SCORES[score], p["found"], p["total"]))
+    return (
+        '<h3 class="group">Sections with shortfalls: should be flagged</h3>'
+        f'<ul class="meters">{"".join(shortfalls)}</ul>'
+        '<h3 class="group">Sections at a good standard or better: should not be flagged</h3>'
+        f'<ul class="meters">{"".join(good)}</ul>'
+    )
 
 
 def overview(results: Results) -> str:
     test = results["sets"]["test"]
-    one = results["test"]["chosen"]["recall_score_1"]
+    chosen = results["test"]["chosen"]
+    shortfalls = percent(chosen["recall_score_2_or_below"]["rate"])
+    good = percent(chosen["flag_rate_score_3"]["rate"])
+    exceptional = percent(chosen["flag_rate_score_4"]["rate"])
     headline = (
         f"<p>The test set: {count(test['reports'])} reports and {count(test['sections'])} "
         "scored sections, read once, with nothing tuned on them. A section is flagged when "
-        "the model gives at least one finding whose quote is really in that section.</p>"
+        "the model gives at least one finding whose quote is really in that section. "
+        "Flagging every section would also catch every shortfall, so the gap between the two "
+        "groups is what counts.</p>"
         f"{flagged_by_score(results)}"
-        "<p>Flagging every section would also catch every shortfall, so the gap is what "
-        "counts. Intervals and every other measure are on the "
-        '<a href="results.html">results page</a>.</p>'
+        '<p>Intervals and every other measure are on the <a href="results.html">results '
+        "page</a>.</p>"
     )
     terms = (
         '<dl class="details">'
@@ -229,6 +244,8 @@ def overview(results: Results) -> str:
         "2 some shortfalls, 3 a good standard, 4 an exceptional standard.</dd>"
         "<dt>Finding</dt><dd>A concern the model names: its category, the exact words it rests "
         "on and a one-sentence reason. Code checks that the words are in the section.</dd>"
+        "<dt>Flagged</dt><dd>A section with at least one finding, whatever statement the "
+        "finding is filed under.</dd>"
         "<dt>Test set</dt><dd>Reports kept aside and read once, at the end, after every choice "
         "had been made on a separate development set.</dd>"
         "</dl>"
@@ -255,7 +272,12 @@ def overview(results: Results) -> str:
             "safety concern it finds with the exact words it rests on, and code checks every "
             "quote. Its findings are then compared with the inspectors' own scores.",
         )
-        + card("headline", f"Every section scored 1 was flagged: {fraction(one)}", headline)
+        + card(
+            "headline",
+            f"It flagged {shortfalls} of sections with shortfalls, {good} of good ones and "
+            f"{exceptional} of exceptional ones",
+            headline,
+        )
         + card("terms", "What the words mean", terms)
         + card("limits", "What it does not show", limits)
         + '<p class="next"><a href="example.html">See the worked example</a>: the model reads '
@@ -299,17 +321,32 @@ def highlighted(text: str, quotes: list[tuple[int, str]]) -> str:
 def finding_item(number: int, finding: dict[str, Any], statement: str) -> str:
     elsewhere = ""
     if finding["category"] != statement:
-        elsewhere = '<p class="meta">Filed under another statement than this section\'s.</p>'
+        elsewhere = '<span class="tag visit">Another statement</span>'
     return (
-        f'<li class="finding"><h3 class="finding-title"><span class="label">Finding {number}: '
-        f"{escape(finding['category'])}</span></h3>"
+        f'<li class="finding"><div class="finding-title"><h3 class="label">Finding {number}: '
+        f"{escape(finding['category'])}</h3>{elsewhere}</div>"
         f'<p class="quote"><mark>“{escape(finding["quote"])}”</mark></p>'
-        f'<p class="why">{escape(finding["reason"])}</p>{elsewhere}</li>'
+        f'<p class="why">{escape(finding["reason"])}</p></li>'
     )
+
+
+def outcome(score: int, flagged: bool) -> str:
+    """The section's outcome as the results count it, and a line when it disagrees with the
+    inspectors' score."""
+    if flagged and score >= 3:
+        return (
+            '<p class="meta">Flagged, though the inspectors scored it '
+            f'{score}: one of the <a href="results.html#good-flags">flags on good '
+            "sections</a>.</p>"
+        )
+    if not flagged and score <= 2:
+        return '<p class="meta">Not flagged, though the inspectors found shortfalls.</p>'
+    return ""
 
 
 def example_section(index: int, section: dict[str, Any]) -> str:
     findings = section["findings"]
+    score = int(section["score"])
     quotes = [(n, f["quote"]) for n, f in enumerate(findings, start=1)]
     paragraphs = "".join(
         f'<p class="entry">{highlighted(text, quotes)}</p>' for text in section["paragraphs"]
@@ -321,11 +358,13 @@ def example_section(index: int, section: dict[str, Any]) -> str:
         listed = f'<ul class="findings" aria-label="Findings">{items}</ul>'
     else:
         listed = '<p class="empty">No findings.</p>'
+    flagged = "Flagged" if findings else "Not flagged"
     heading_id = f"section-{index}"
     return (
         f'<section class="card" aria-labelledby="{heading_id}"><div class="card-head">'
         f'<h2 id="{heading_id}">{escape(section["statement"])}</h2>'
-        f"{score_tag(int(section['score']))}</div>{paragraphs}{listed}</section>"
+        f'{score_tag(score)}<span class="tag">{flagged}</span></div>'
+        f"{outcome(score, bool(findings))}{paragraphs}{listed}</section>"
     )
 
 
@@ -339,10 +378,13 @@ def example(reading: dict[str, Any]) -> str:
         else f"The model gave no usable answer for {unanswered} sections."
     )
     how = (
-        "<p>Each card below is one section. The model saw only the section's paragraphs, "
-        "never its name, its score or the rest of the report. Highlighted words are the quotes "
-        "its findings rest on, each found in the text by code; the small number after a "
-        "highlight is its finding.</p>"
+        "<p>Each card below is one section: the inspectors' score, and whether the model "
+        "flagged it. The model saw only the section's paragraphs, never its name, its score or "
+        "the rest of the report. Highlighted words are the quotes its findings rest on, each "
+        "found in the text by code; the small number after a highlight is its finding. Under "
+        "each quote is the model's own one-sentence reason. A finding the model filed under "
+        "another statement than its section's is tagged Another statement; the section still "
+        "counts as flagged.</p>"
         "<p>A finding whose quote is not in the text is dropped and counted, never repaired. "
         f"This reading dropped {count(reading['dropped'])}. {answered}</p>"
     )
@@ -361,7 +403,6 @@ def example(reading: dict[str, Any]) -> str:
             "A worked example",
             "An invented Safe page in CQC's layout, and the chosen model's one reading of it, "
             "shown as it came, mistakes included.",
-            tag='<span class="tag synthetic">SYNTHETIC</span>',
         )
         + '<p class="notice caution"><strong>Invented report.</strong> Every word of it is '
         "made up and describes no real service. No real report text appears anywhere on this "
@@ -369,6 +410,8 @@ def example(reading: dict[str, Any]) -> str:
         + card("how", "How to read it", how)
         + sections
         + card("reading", "The reading", provenance)
+        + '<p class="next"><a href="results.html">See the results</a>: how the model did on '
+        "real reports, against the inspectors' scores.</p>"
     )
 
 
@@ -403,10 +446,10 @@ def by_statement(results: Results) -> str:
         agreement = topic["category_agreement"]
         misses[statement] = agreement["total"] - agreement["found"]
         cells = (
-            f"<div><dt>Scored 1–2, flagged</dt>"
+            f"<div><dt>Shortfalls flagged</dt>"
             f"<dd>{fraction(topic['recall_score_2_or_below'])}</dd></div>"
-            f"<div><dt>Scored 3, flagged</dt><dd>{fraction(topic['flag_rate_score_3'])}</dd></div>"
-            f"<div><dt>Own-statement finding</dt><dd>{fraction(agreement)}</dd></div>"
+            f"<div><dt>Score 3 flagged</dt><dd>{fraction(topic['flag_rate_score_3'])}</dd></div>"
+            f"<div><dt>Own statement</dt><dd>{fraction(agreement)}</dd></div>"
         )
         rows.append(
             f'<li><p class="name">{escape(statement)}</p><dl class="cells">{cells}</dl></li>'
@@ -414,8 +457,9 @@ def by_statement(results: Results) -> str:
     worst = sorted(misses, key=lambda s: misses[s], reverse=True)[:2]
     total = sum(misses.values())
     return (
-        "<p>Test set, chosen model. Own-statement finding: of the flagged shortfalls, those "
-        "with a finding filed under the section's own statement.</p>"
+        "<p>Test set, chosen model. For each statement: the sections with shortfalls (scored "
+        "1 or 2) that were flagged; the sections scored 3 that were flagged; and, of the "
+        "flagged shortfalls, those with a finding filed under the section's own statement.</p>"
         f'<ul class="list statements">{"".join(rows)}</ul>'
         + f"<p>Of the {total} flagged shortfalls with no finding under their own statement, "
         f"{misses[worst[0]] + misses[worst[1]]} are in {escape(worst[0])} or "
@@ -536,14 +580,18 @@ def results_page(results: Results) -> str:
     return (
         head(
             "Results",
-            "Every number here is read from the project's public results file, which its code "
-            "builds from the saved model runs and checks against them.",
+            f'Every number here is read from the project\'s <a href="{RESULTS_FILE}">public '
+            "results file</a>, which its code builds from the saved model runs and checks "
+            'against them. The words are defined on the <a href="index.html#terms">overview'
+            "</a>.",
         )
         + card("measures", "The test set, read once", measures)
         + card("grading", "More findings go with worse scores", grades)
         + card("statements", "By statement", by_statement(results))
         + card("good-flags", "What a flag on a section scored 3 is", good_flags(results))
         + card("choice", "The model choice, and what it cost", model_choice(results))
+        + '<p class="next"><a href="method.html">See the method</a>: how the reports were '
+        "chosen and read, and how the work is checked.</p>"
     )
 
 
@@ -688,6 +736,8 @@ def method(results: Results) -> str:
         + card("checks", "How it is checked", checks)
         + card("run", "Run it yourself", run)
         + card("data", "Data and credit", data)
+        + f'<p class="next">The code and the whole study: <a href="{REPOSITORY}">the project '
+        "on GitHub</a>.</p>"
     )
 
 
@@ -702,7 +752,12 @@ def build(results: Results, reading: dict[str, Any]) -> dict[str, str]:
     """Every page of the site, by file name."""
     return {
         "index.html": shell("index.html", "Overview", overview(results)),
-        "example.html": shell("example.html", "Worked example", example(reading)),
+        "example.html": shell(
+            "example.html",
+            "Worked example",
+            example(reading),
+            tag='<span class="tag synthetic">SYNTHETIC</span>',
+        ),
         "results.html": shell("results.html", "Results", results_page(results)),
         "method.html": shell("method.html", "Method and data", method(results)),
         "404.html": shell("404.html", "Page not found", not_found(), root="/"),

@@ -106,7 +106,10 @@ def test_every_link_between_pages_resolves() -> None:
             address = attrs.get("href") or attrs.get("src") or ""
             if tag not in ("a", "link") or address.startswith(("http:", "https:", "#")):
                 continue
-            assert address.lstrip("/") in files, (name, address)
+            path, _, section = address.lstrip("/").partition("#")
+            assert path in files, (name, address)
+            if section:
+                assert f'id="{section}"' in pages[path], (name, address)
 
 
 def test_quotes_are_highlighted_where_they_stand() -> None:
