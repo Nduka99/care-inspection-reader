@@ -15,7 +15,8 @@ It is the companion of [Home-care intelligence](https://github.com/Nduka99/homec
 which uses the same method on carers' notes. Those notes are synthetic, so they cannot show how the
 method does on real writing; these reports can.
 
-Status: the study is finished. A static results site is being built.
+Status: finished. The results are also published as a small website:
+[reader.ndukanwagbo.com](https://reader.ndukanwagbo.com).
 
 ## Results
 
@@ -163,6 +164,13 @@ author's machine: the publish scan against every cached report, and
 `inspection-reader results --check`, which rebuilds every number in `site/results.json` from the
 model runs.
 
+The results site is built from `site/` by a GitHub Actions workflow and published with GitHub
+Pages. It has no scripts, and its own security policy allows nothing from another site. Two more
+checks cover it: `scripts/ui_check.py _site` runs accessibility checks (axe, reflow, text spacing,
+forced colours) in Chromium, Firefox and WebKit and attacks the page's security policy, and
+`scripts/site_check.py https://reader.ndukanwagbo.com` checks the live site from outside, including
+the publish scan on the pages as served.
+
 ## Limits
 
 - Inspectors' prose is not daily care notes. It is written for the public, by trained people.
@@ -184,6 +192,7 @@ Needs [uv](https://docs.astral.sh/uv/).
 | Run every check | `uv run python scripts/check.py` |
 | Read one saved Safe page with a local model | `uv run inspection-reader read --model qwen3.5-4b page.html` |
 | Read the synthetic example | `uv run inspection-reader read --model qwen3.5-4b site/example-page.html` |
+| Build the results site into `_site/` | `uv run inspection-reader site --out _site` |
 
 A read needs llama.cpp's `llama-server` on `PATH` (or its path in `LLAMA_SERVER`) and the model
 file in `models/`, matching its size and SHA-256 in `models.json`. The synthetic page's five
