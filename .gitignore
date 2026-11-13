@@ -5,6 +5,8 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 .env
+# The built results site: rebuilt from site/ by `inspection-reader site`.
+_site/
 # Local-only material: fetched CQC pages, model files and the private publish tools never enter git.
 data/
 models/

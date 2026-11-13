@@ -7,7 +7,8 @@ All data lives in the git-ignored `data/` folder:
 - `data/sample.json`: the agencies chosen, with their split;
 - `data/reports/<split>/<location>.json`: each report's parsed Safe sections.
 
-`site/results.json` is public: aggregates only, rebuilt from the runs by `results`.
+`site/results.json` is public: aggregates only, rebuilt from the runs by `results`. The `site`
+command turns it, the worked example and `site/style.css` into the static results site.
 """
 
 import argparse
@@ -26,12 +27,16 @@ from inspection_reader import (
     results,
     sample,
     sets,
+    site,
 )
 
 DATA = Path("data")
 RAW = DATA / "raw"
 # Public: aggregates only, built from the private runs.
-RESULTS = Path("site") / "results.json"
+SITE = Path("site")
+RESULTS = SITE / "results.json"
+# Copied into the built site as they are.
+SITE_FILES = ("style.css", "icon.svg")
 PORT = 8091
 SPLITS = ("dev", "test")
 
@@ -243,6 +248,18 @@ def run_results(check: bool) -> None:
         print(f"wrote {RESULTS}")
 
 
+def run_site(out: Path) -> None:
+    """Build the static site into `out` from the public files in `site/`."""
+    results_data = json.loads(RESULTS.read_text(encoding="utf-8"))
+    reading = json.loads((SITE / "example-reading.json").read_text(encoding="utf-8"))
+    out.mkdir(parents=True, exist_ok=True)
+    for name, html in site.build(results_data, reading).items():
+        (out / name).write_text(html, encoding="utf-8", newline="\n")
+    for name in SITE_FILES:
+        (out / name).write_bytes((SITE / name).read_bytes())
+    print(f"built {out}")
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="inspection-reader")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -264,11 +281,15 @@ def main(argv: list[str] | None = None) -> None:
     results_command.add_argument(
         "--check", action="store_true", help="rebuild them from the runs and compare with the file"
     )
+    site_command = commands.add_parser("site", help="build the static results site")
+    site_command.add_argument("--out", type=Path, default=Path("_site"))
     args = parser.parse_args(argv)
     if args.command == "read":
         run_read(args.model, args.page, args.out)
     elif args.command == "results":
         run_results(args.check)
+    elif args.command == "site":
+        run_site(args.out)
     elif args.command == "sample":
         run_sample()
     elif args.command == "fetch":

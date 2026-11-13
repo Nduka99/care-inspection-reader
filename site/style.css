@@ -1,0 +1,408 @@
+/* Care inspection reader: the results site.
+   Cut from the author's home-care app stylesheet with every value unchanged: a light-grey
+   canvas with white cards, near-black text, blue links. Word tags carry meaning, never colour
+   alone; yellow highlighter marks only the words the model quoted. Phone first. Three parts
+   are this site's own and use the same tokens: the page switch, tables and the meter list. */
+
+:root {
+  color-scheme: light dark;
+  --canvas: #f2f4f5;
+  --surface: #ffffff;
+  --sunken: #e6eaed;
+  --selected: #e3edf8;
+  --ink: #1b2127;
+  --ink-2: #4a5560;
+  --line: #d6dce1;
+  --line-strong: #6b7680; /* borders that must show: at least 3:1 on a card */
+  --link: #1757a6;
+  --focus: #1757a6;
+  --primary: #1d7a48;
+  --highlight: #ffe27a;
+  --on-highlight: #1b2127;
+  --today-bg: #fbe3e4;
+  --today: #a3141f;
+  --visit-bg: #fff0d4;
+  --visit: #874600;
+  --check-bg: #e3edf8;
+  --check: #1d4f86;
+  --unread-bg: #e8ecef;
+  --unread: #3c4650;
+  --done-bg: #e2f2e8;
+  --done: #17683b;
+  --shadow: 0 1px 2px rgb(16 24 32 / 0.06), 0 3px 10px rgb(16 24 32 / 0.05);
+  --body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --radius: 12px;
+  --radius-control: 8px;
+  --gutter: 16px;
+  --narrow: 42rem;
+  --wide: 76rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --canvas: #101417;
+    --surface: #1a2025;
+    --sunken: #232a30;
+    --selected: #1c2f45;
+    --ink: #e8edf0;
+    --ink-2: #aab5be;
+    --line: #2e373f;
+    --line-strong: #7d8993;
+    --link: #8ebbf5;
+    --focus: #9cc3ff;
+    --primary: #4cb87e;
+    --highlight: #6e5a0e;
+    --on-highlight: #fff6d1;
+    --today-bg: #3d1519;
+    --today: #ffb4b9;
+    --visit-bg: #3a2a0c;
+    --visit: #ffcf87;
+    --check-bg: #16293d;
+    --check: #a9cdf5;
+    --unread-bg: #272e34;
+    --unread: #c9d2da;
+    --done-bg: #12301f;
+    --done: #93ddb3;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 3px 10px rgb(0 0 0 / 0.25);
+  }
+}
+
+@media (min-width: 600px) {
+  :root { --gutter: 24px; }
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--canvas);
+  color: var(--ink);
+  font: 1rem/1.5 var(--body);
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection { background: var(--link); color: var(--surface); }
+
+html { scrollbar-color: var(--line-strong) var(--canvas); }
+
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+a:hover { text-decoration-thickness: 2px; }
+
+h1, h2, h3 { line-height: 1.25; margin: 0; text-wrap: balance; }
+h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 1.125rem; font-weight: 700; }
+p { margin: 0; }
+
+.figure { font-variant-numeric: tabular-nums; }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip {
+  position: absolute;
+  left: var(--gutter);
+  top: -4rem;
+  z-index: 10;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-control);
+  background: var(--ink);
+  color: var(--surface);
+}
+.skip:focus { top: 0.5rem; }
+
+/* The app bar: the name, then the four pages. It holds still while pages change. */
+.appbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  padding-top: env(safe-area-inset-top);
+  view-transition-name: appbar;
+}
+.appbar-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 0.5rem;
+  max-width: var(--wide);
+  min-height: 3.5rem;
+  margin: 0 auto;
+  padding: 0.25rem max(var(--gutter), env(safe-area-inset-right)) 0.25rem
+    max(var(--gutter), env(safe-area-inset-left));
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.brand:hover .brand-name { text-decoration: underline; }
+.mark { width: 2rem; height: 2rem; flex: none; }
+
+/* The four pages, as the home-care app's two-page switch: a sunken tray, the current page raised on a
+   card with an underline, so it is marked by a line and not only by tone. Two by two on a
+   phone, one row from 600 px, and beside the name when the bar is wide enough. */
+.pages {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.25rem;
+  width: 100%;
+  margin: 0.25rem 0;
+  padding: 0.25rem;
+  border-radius: var(--radius);
+  background: var(--sunken);
+}
+@media (min-width: 600px) {
+  .pages { display: inline-flex; width: auto; }
+}
+@media (min-width: 840px) {
+  .pages { margin-left: 1rem; }
+}
+.pages a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0 0.5rem;
+  border-radius: var(--radius-control);
+  color: var(--ink);
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  text-decoration: none;
+}
+@media (min-width: 600px) {
+  .pages a { padding: 0 1rem; }
+}
+.pages a:hover { background: var(--surface); }
+.pages [aria-current="page"] {
+  background: var(--surface);
+  box-shadow: var(--shadow), inset 0 -3px 0 var(--link);
+}
+/* High-contrast modes drop backgrounds and shadows, so the current page gets an outline. */
+@media (forced-colors: active) {
+  .pages [aria-current="page"] { outline: 2px solid CanvasText; outline-offset: -2px; }
+}
+
+/* The page column: narrow for reading. */
+.page {
+  flex: 1;
+  width: 100%;
+  max-width: var(--narrow);
+  margin: 0 auto;
+  padding: 1rem max(var(--gutter), env(safe-area-inset-right)) 2rem
+    max(var(--gutter), env(safe-area-inset-left));
+}
+
+.page-head { margin-bottom: 1rem; }
+.page-head .sub { max-width: 75ch; margin-top: 0.25rem; color: var(--ink-2); }
+.page-head .tag { margin-bottom: 0.5rem; }
+
+.footer {
+  width: 100%;
+  max-width: var(--wide);
+  margin: 0 auto;
+  padding: 1.5rem max(var(--gutter), env(safe-area-inset-right))
+    max(1.5rem, env(safe-area-inset-bottom)) max(var(--gutter), env(safe-area-inset-left));
+  color: var(--ink-2);
+  font-size: 0.875rem;
+}
+.footer p { max-width: 75ch; }
+.footer p + p { margin-top: 0.25rem; }
+
+/* Cards: one per question a page answers. */
+.card {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.card > h2,
+.card > .card-head { margin-bottom: 0.75rem; }
+.card > * + p,
+.card > * + ul,
+.card > * + ol { margin-top: 0.75rem; }
+.card > h2 + p,
+.card > .card-head + p { margin-top: 0; }
+.card p, .card li { max-width: 75ch; }
+.card ul, .card ol { margin-bottom: 0; }
+.card > p + .details { margin-top: 0.75rem; }
+.card ul:not([class]), .card ol:not([class]) { padding-left: 1.25rem; } /* plain lists only */
+.card ul:not([class]) > li + li, .card ol > li + li { margin-top: 0.375rem; }
+.card-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; }
+.card-head .tag { white-space: normal; } /* a long score tag wraps on a narrow phone */
+.section-title { margin: 1.75rem 0 0.25rem; }
+.meta { color: var(--ink-2); font-size: 0.875rem; }
+.next { margin-top: 1.5rem; }
+
+/* Word tags: the word carries the meaning, the colour only repeats it. */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 6px;
+  background: var(--unread-bg);
+  color: var(--unread);
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.tag.today { background: var(--today-bg); color: var(--today); }
+.tag.visit { background: var(--visit-bg); color: var(--visit); }
+.tag.done { background: var(--done-bg); color: var(--done); }
+.tag.synthetic { background: var(--sunken); color: var(--ink); letter-spacing: 0.04em; }
+
+.notice {
+  max-width: 75ch;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-control);
+  background: var(--check-bg);
+  color: var(--check);
+}
+.notice.caution { background: var(--visit-bg); color: var(--visit); }
+
+/* Term and value pairs. */
+.details {
+  display: grid;
+  grid-template-columns: minmax(6rem, max-content) 1fr;
+  gap: 0.375rem 1rem;
+  margin: 0;
+}
+.details dt { color: var(--ink-2); }
+.details dd { margin: 0; }
+@media (max-width: 380px) {
+  .details { grid-template-columns: 1fr; gap: 0; }
+  .details dd { margin-bottom: 0.5rem; }
+}
+
+/* The report's words, with the model's quotes highlighted. */
+.entry {
+  max-width: 68ch;
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.65;
+  overflow-wrap: break-word;
+}
+mark {
+  padding: 0 0.1em; /* inline, so padding would part the quoted words */
+  border-radius: 3px;
+  background: var(--highlight);
+  color: var(--on-highlight);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.ref { margin-left: 0.1em; font-size: 0.75em; font-weight: 700; }
+
+.provenance { margin-top: 1rem; color: var(--ink-2); font-size: 0.875rem; }
+.provenance summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 3rem;
+  color: var(--link);
+  cursor: pointer;
+}
+.provenance code { font-size: 0.8125rem; overflow-wrap: anywhere; }
+
+/* A finding: its category, the quote it rests on, the model's reason. */
+.findings { list-style: none; margin: 1rem 0 0; padding: 0; }
+.finding { padding: 0.75rem 0 0; border-top: 1px solid var(--line); }
+.finding + .finding { margin-top: 0.75rem; }
+.finding-title { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.5rem; }
+.finding-title .label { font-size: 1.125rem; font-weight: 700; }
+.finding .quote { margin-top: 0.25rem; font-size: 1.125rem; line-height: 1.6; }
+.finding .why { margin-top: 0.5rem; }
+.empty { margin-top: 1rem; color: var(--ink-2); }
+
+/* Tables: figures right-aligned in tabular figures, hairline rows. A wide table scrolls inside
+   its own frame, never the page. */
+.table-frame { margin-top: 0.75rem; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+caption { padding-bottom: 0.5rem; color: var(--ink-2); font-size: 0.875rem; text-align: left; }
+th, td { padding: 0.5rem 0.5rem 0.5rem 0; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+th:last-child, td:last-child { padding-right: 0; }
+thead th { color: var(--ink-2); font-size: 0.875rem; font-weight: 700; overflow-wrap: anywhere; }
+tbody th { font-weight: 400; }
+td.number, th.number { text-align: right; }
+/* Below 360 px a figure may wrap (at its dash), so a table never overflows its card. */
+@media (min-width: 360px) {
+  td.number { white-space: nowrap; }
+}
+@media (min-width: 600px) {
+  th, td { padding-right: 0.75rem; }
+}
+td .below { display: block; color: var(--ink-2); font-size: 0.875rem; }
+tbody tr:last-child > * { border-bottom: 0; }
+
+/* The meter list: one row per score, its name, a bar for the share and the figures. The bar
+   is drawn by an SVG whose track is a pale step of the bar's own blue. */
+.meters { list-style: none; margin: 1rem 0 0; padding: 0; }
+.meters li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.25rem 1rem; }
+.meters li + li { margin-top: 1rem; }
+.meters .name { font-weight: 700; }
+.meters .name span { color: var(--ink-2); font-weight: 400; }
+.meters .share { text-align: right; font-variant-numeric: tabular-nums; }
+.meters svg { grid-column: 1 / -1; display: block; width: 100%; height: 0.75rem; }
+.meters .track { fill: var(--selected); }
+.meters .fill { fill: var(--link); }
+
+/* Lists of rows inside one card, each row a name and its figures in a small grid: the home-care
+   app's pattern for a table that must fit a phone. */
+.list {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.list > li + li { border-top: 1px solid var(--line); }
+.statements > li { padding: 0.875rem 1rem; }
+.statements .name { font-weight: 700; }
+.cells {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.25rem 0.75rem;
+  margin: 0.5rem 0 0;
+}
+.cells div { min-width: 0; }
+.cells dt { color: var(--ink-2); font-size: 0.875rem; }
+.cells dd { margin: 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+
+code { font-size: 0.9375rem; overflow-wrap: anywhere; }
+/* A command wraps rather than scrolls, so nothing on a page scrolls sideways. */
+pre {
+  margin: 0.75rem 0 0;
+  padding: 0.75rem;
+  border-radius: var(--radius-control);
+  background: var(--sunken);
+  white-space: pre-wrap;
+}
+
+/* Motion: pages change like an app's screens. The bar holds; the content cross-fades. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation-duration: 160ms; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
+}

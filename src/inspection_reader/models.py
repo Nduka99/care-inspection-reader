@@ -9,6 +9,7 @@ llama-server program is found on PATH, or at the path in the `LLAMA_SERVER` envi
 import hashlib
 import json
 import os
+import shutil
 import subprocess
 import time
 import urllib.error
@@ -47,7 +48,10 @@ def problems(entries: list[dict[str, Any]], folder: Path, quick: bool) -> list[s
     for item in entries:
         path = folder / item["file"]
         if not path.is_file():
-            found.append(f"missing: {item['file']}")
+            found.append(
+                f"missing: {path}; download {item['file']} from "
+                f"https://huggingface.co/{item['source']} into {folder}"
+            )
         elif path.stat().st_size != item["bytes"]:
             found.append(f"size differs: {item['file']}")
         elif not quick and sha256(path) != item["sha256"]:
@@ -55,8 +59,21 @@ def problems(entries: list[dict[str, Any]], folder: Path, quick: bool) -> list[s
     return found
 
 
-def server_command(item: dict[str, Any], port: int) -> list[str]:
+def server_program() -> str:
+    """The llama-server program to run, or a plain message saying how to provide it (without
+    this check, a missing program surfaces as a bare operating-system error)."""
     program = os.environ.get("LLAMA_SERVER", "llama-server")
+    found = shutil.which(program)
+    if found is None:
+        raise SystemExit(
+            f"llama-server not found ({program}): put llama.cpp's llama-server on PATH, or set "
+            "LLAMA_SERVER to its full path"
+        )
+    return found
+
+
+def server_command(item: dict[str, Any], port: int) -> list[str]:
+    program = server_program()
     model = str(FOLDER / item["file"])
     host = ["--host", "127.0.0.1", "--port", str(port)]
     return [program, "-m", model, *item["server_args"], *host]
@@ -76,15 +93,15 @@ def served(name: str, port: int, log: Path) -> Iterator[str]:
     """Run llama-server with the named model, after checking its SHA-256; yield its URL and
     stop it afterwards."""
     item = entry(name)
+    # The program is checked first: hashing a model file takes a while.
+    command = server_command(item, port)
     found = problems([item], FOLDER, quick=False)
     if found:
         raise SystemExit("; ".join(found))
     url = f"http://127.0.0.1:{port}"
     log.parent.mkdir(parents=True, exist_ok=True)
     with log.open("w", encoding="utf-8") as output:
-        server = subprocess.Popen(
-            server_command(item, port), stdout=output, stderr=subprocess.STDOUT
-        )
+        server = subprocess.Popen(command, stdout=output, stderr=subprocess.STDOUT)
         try:
             deadline = time.monotonic() + START_TIMEOUT_SECONDS
             while not healthy(url):

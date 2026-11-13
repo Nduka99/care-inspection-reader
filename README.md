@@ -11,6 +11,10 @@ reports, which quote the people who use the services and their relatives. No rep
 name or location name is stored in this repository. A fetch command rebuilds the data from CQC's
 website, and results are reported in aggregate.
 
+It is the companion of [Home-care intelligence](https://github.com/Nduka99/homecare_intelligence),
+which uses the same method on carers' notes. Those notes are synthetic, so they cannot show how the
+method does on real writing; these reports can.
+
 Status: the study is finished. A static results site is being built.
 
 ## Results
